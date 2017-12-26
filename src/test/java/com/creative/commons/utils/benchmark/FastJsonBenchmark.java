@@ -61,13 +61,13 @@ public class FastJsonBenchmark {
     @Benchmark
     public void jsonCodecMultiTest() {
         byte[] obj1 = JsonCodec.encode(msg1);
-        msg1 = JsonCodec.decode(obj1);
+        Message msg1 = JsonCodec.decode(obj1);
 
         byte[] obj2 = JsonCodec.encode(msg2);
-        msg2 = JsonCodec.decode(obj2);
+        Message msg2 = JsonCodec.decode(obj2);
 
         byte[] obj3 = JsonCodec.encode(msg3);
-        msg3 = JsonCodec.decode(obj3);
+        Message msg3 = JsonCodec.decode(obj3);
     }
 
     public static void main(String[] args) throws Exception {

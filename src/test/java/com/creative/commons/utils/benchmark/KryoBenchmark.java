@@ -60,13 +60,13 @@ public class KryoBenchmark {
     @Benchmark
     public void kryoCodecMultiTest() {
         byte[] obj1 = KryoCodec.encode(msg1);
-        msg1 = KryoCodec.decode(obj1);
+        Message msg1 = KryoCodec.decode(obj1);
 
         byte[] obj2 = KryoCodec.encode(msg2);
-        msg2 = KryoCodec.decode(obj2);
+        Message msg2 = KryoCodec.decode(obj2);
 
         byte[] obj3 = KryoCodec.encode(msg3);
-        msg3 = KryoCodec.decode(obj3);
+        Message msg3 = KryoCodec.decode(obj3);
     }
 
     public static void main(String[] args) throws Exception {
