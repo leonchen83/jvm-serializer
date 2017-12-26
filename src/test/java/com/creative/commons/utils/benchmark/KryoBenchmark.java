@@ -58,7 +58,7 @@ public class KryoBenchmark {
     }
 
     @Benchmark
-    public void kryoCodecMultiTest() throws Exception {
+    public void kryoCodecMultiTest() {
         byte[] obj1 = KryoCodec.encode(msg1);
         msg1 = KryoCodec.decode(obj1);
 

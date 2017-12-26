@@ -82,11 +82,11 @@ public abstract class KryoCodec {
         return kryos.get();
     }
 
-    public static <T> T decode(byte[] bytes) throws Exception {
+    public static <T> T decode(byte[] bytes) {
         return getWrapper().decode(bytes);
     }
 
-    public static byte[] encode(Object object) throws Exception {
+    public static byte[] encode(Object object) {
         return getWrapper().encode(object);
     }
 
