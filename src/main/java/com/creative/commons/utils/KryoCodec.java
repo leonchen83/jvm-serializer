@@ -2,110 +2,113 @@ package com.creative.commons.utils;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoSerializable;
-import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.google.common.collect.Lists;
-import org.objenesis.strategy.StdInstantiatorStrategy;
-
+import com.esotericsoftware.kryo.io.UnsafeInput;
+import com.esotericsoftware.kryo.io.UnsafeOutput;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.Date;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import org.objenesis.strategy.StdInstantiatorStrategy;
 
 /**
  * @author von gosling
  */
 public abstract class KryoCodec {
-    private static final List<Class<?>> classList = Lists.newArrayList();
-    private static final List<Serializer<?>> serializerList = Lists.newArrayList();
-    private static final List<Integer> idList = Lists.newArrayList();
-    private static final ThreadLocal<Kryo> kryos = new ThreadLocal<Kryo>() {
-        protected Kryo initialValue() {
-            Kryo kryo = new Kryo();
-
-            kryo.register(byte[].class);
-            kryo.register(char[].class);
-            kryo.register(short[].class);
-            kryo.register(int[].class);
-            kryo.register(long[].class);
-            kryo.register(float[].class);
-            kryo.register(double[].class);
-            kryo.register(boolean[].class);
-            kryo.register(String[].class);
-            kryo.register(Object[].class);
-            kryo.register(KryoSerializable.class);
-            kryo.register(BigInteger.class);
-            kryo.register(BigDecimal.class);
-            kryo.register(Class.class);
-            kryo.register(Date.class);
+    private static final ThreadLocal<Wrapper> kryos = new ThreadLocal<Wrapper>() {
+        protected Wrapper initialValue() {
+            Wrapper wrapper = new Wrapper();
+            wrapper.kryo = new Kryo();
+            wrapper.input = new UnsafeInput();
+            wrapper.output = new UnsafeOutput(4096);
+            wrapper.kryo.register(byte[].class);
+            wrapper.kryo.register(char[].class);
+            wrapper.kryo.register(short[].class);
+            wrapper.kryo.register(int[].class);
+            wrapper.kryo.register(long[].class);
+            wrapper.kryo.register(float[].class);
+            wrapper.kryo.register(double[].class);
+            wrapper.kryo.register(boolean[].class);
+            wrapper.kryo.register(String[].class);
+            wrapper.kryo.register(Object[].class);
+            wrapper.kryo.register(KryoSerializable.class);
+            wrapper.kryo.register(BigInteger.class);
+            wrapper.kryo.register(BigDecimal.class);
+            wrapper.kryo.register(Class.class);
+            wrapper.kryo.register(Date.class);
             //kryo.register(Enum.class);
-            kryo.register(EnumSet.class);
-            kryo.register(Currency.class);
-            kryo.register(StringBuffer.class);
-            kryo.register(StringBuilder.class);
-            kryo.register(Collections.EMPTY_LIST.getClass());
-            kryo.register(Collections.EMPTY_MAP.getClass());
-            kryo.register(Collections.EMPTY_SET.getClass());
-            kryo.register(Collections.singletonList(null).getClass());
-            kryo.register(Collections.singletonMap(null, null).getClass());
-            kryo.register(Collections.singleton(null).getClass());
-            kryo.register(TreeSet.class);
-            kryo.register(Collection.class);
-            kryo.register(TreeMap.class);
-            kryo.register(Map.class);
+            wrapper.kryo.register(EnumSet.class);
+            wrapper.kryo.register(Currency.class);
+            wrapper.kryo.register(StringBuffer.class);
+            wrapper.kryo.register(StringBuilder.class);
+            wrapper.kryo.register(Collections.EMPTY_LIST.getClass());
+            wrapper.kryo.register(Collections.EMPTY_MAP.getClass());
+            wrapper.kryo.register(Collections.EMPTY_SET.getClass());
+            wrapper.kryo.register(Collections.singletonList(null).getClass());
+            wrapper.kryo.register(Collections.singletonMap(null, null).getClass());
+            wrapper.kryo.register(Collections.singleton(null).getClass());
+            wrapper.kryo.register(TreeSet.class);
+            wrapper.kryo.register(Collection.class);
+            wrapper.kryo.register(TreeMap.class);
+            wrapper.kryo.register(Map.class);
             try {
-                kryo.register(Class.forName("sun.util.calendar.ZoneInfo"));
+                wrapper.kryo.register(Class.forName("sun.util.calendar.ZoneInfo"));
             } catch (ClassNotFoundException e) {
                 //Noop
             }
-            kryo.register(Calendar.class);
-            kryo.register(Locale.class);
+            wrapper.kryo.register(Calendar.class);
+            wrapper.kryo.register(Locale.class);
 
-            kryo.register(BitSet.class);
-            kryo.register(HashMap.class);
-            kryo.register(Timestamp.class);
-            kryo.register(ArrayList.class);
+            wrapper.kryo.register(BitSet.class);
+            wrapper.kryo.register(HashMap.class);
+            wrapper.kryo.register(Timestamp.class);
+            wrapper.kryo.register(ArrayList.class);
 
-            int size = idList.size();
-            for (int i = 0; i < size; i++) {
-                kryo.register(classList
-                                .get(i),
-                        serializerList
-                                .get(i),
-                        idList.get(i));
-            }
-            kryo.setRegistrationRequired(true);
-            kryo.setReferences(false);
-            kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
-            return kryo;
+            wrapper.kryo.setInstantiatorStrategy(new Kryo.DefaultInstantiatorStrategy(new StdInstantiatorStrategy()));
+            return wrapper;
         }
     };
 
-    public static synchronized void registerClass(Class<?> className, Serializer<?> serializer,
-                                                  int id) {
-        classList.add(className);
-        serializerList.add(serializer);
-        idList.add(id);
-    }
-
-    public static synchronized void register(Class<?> className) {
-        getKryo().register(className);
-    }
-
-    public static Kryo getKryo() {
+    public static Wrapper getWrapper() {
         return kryos.get();
     }
 
     public static Object decode(byte[] bytes) throws Exception {
-        Input input = new Input(bytes);
-        return getKryo().readClassAndObject(input);
+        return getWrapper().decode(bytes);
     }
 
     public static byte[] encode(Object object) throws Exception {
-        //4K
-        Output output = new Output(4096);
-        getKryo().writeClassAndObject(output, object);
-        return output.toBytes();
+        return getWrapper().encode(object);
+    }
+
+    private static class Wrapper {
+        private Kryo kryo;
+        private Input input;
+        private Output output;
+
+        public Object decode(byte[] bytes) throws Exception {
+            input.setBuffer(bytes);
+            return kryo.readClassAndObject(input);
+        }
+
+        public byte[] encode(Object object) throws Exception {
+            //4K
+            output.clear();
+            kryo.writeClassAndObject(output, object);
+            return output.toBytes();
+        }
     }
 }

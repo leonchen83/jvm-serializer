@@ -12,7 +12,7 @@ import com.alibaba.fastjson.serializer.SimpleDateFormatSerializer;
  */
 public abstract class JsonCodec {
     private static SerializeConfig config = new SerializeConfig();
-    private static SerializerFeature[] sfeatures = {SerializerFeature.WriteEnumUsingToString,SerializerFeature.UseISO8601DateFormat, SerializerFeature.DisableCircularReferenceDetect};
+    private static SerializerFeature[] sfeatures = {SerializerFeature.WriteEnumUsingToString,SerializerFeature.UseISO8601DateFormat, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.WriteClassName};
     private static Feature[] features = {Feature.AllowISO8601DateFormat, Feature.DisableCircularReferenceDetect};
 
     static {
@@ -25,7 +25,7 @@ public abstract class JsonCodec {
         return JSONObject.toJSONString(content, config, sfeatures).getBytes();
     }
 
-    public static <T> T decode(byte[] content, Class<T> clazz) {
-        return JSON.parseObject(content, clazz, features);
+    public static <T> T decode(byte[] content) {
+        return (T)JSON.parse(content, features);
     }
 }

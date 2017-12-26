@@ -8,7 +8,6 @@ import java.util.Map;
 /**
  * @author Von Gosling
  */
-@org.msgpack.annotation.Message
 public class Message implements Serializable {
     private static final long serialVersionUID = 1892011038502772782L;
     /**
