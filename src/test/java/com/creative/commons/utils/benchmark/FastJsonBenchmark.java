@@ -15,9 +15,7 @@ import java.util.Objects;
 import java.util.TimeZone;
 import org.openjdk.jmh.annotations.Benchmark;
 
-import java.io.IOException;
 import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
@@ -61,7 +59,7 @@ public class FastJsonBenchmark {
     }
 
     @Benchmark
-    public void jsonCodecMultiTest() throws IOException {
+    public void jsonCodecMultiTest() {
         byte[] obj1 = JsonCodec.encode(msg1);
         msg1 = JsonCodec.decode(obj1);
 
@@ -72,7 +70,7 @@ public class FastJsonBenchmark {
         msg3 = JsonCodec.decode(obj3);
     }
 
-    public static void main(String[] args) throws RunnerException {
+    public static void main(String[] args) throws Exception {
         Options opt = new OptionsBuilder()
             .include(FastJsonBenchmark.class.getSimpleName())
             .warmupIterations(10)

@@ -15,7 +15,6 @@ import java.util.Objects;
 import java.util.TimeZone;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.runner.Runner;
-import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
@@ -61,16 +60,16 @@ public class KryoBenchmark {
     @Benchmark
     public void kryoCodecMultiTest() throws Exception {
         byte[] obj1 = KryoCodec.encode(msg1);
-        msg1 = (Message) KryoCodec.decode(obj1);
+        msg1 = KryoCodec.decode(obj1);
 
         byte[] obj2 = KryoCodec.encode(msg2);
-        msg2 = (Message) KryoCodec.decode(obj2);
+        msg2 = KryoCodec.decode(obj2);
 
         byte[] obj3 = KryoCodec.encode(msg3);
-        msg3 = (Message) KryoCodec.decode(obj3);
+        msg3 = KryoCodec.decode(obj3);
     }
 
-    public static void main(String[] args) throws RunnerException {
+    public static void main(String[] args) throws Exception {
         Options opt = new OptionsBuilder()
             .include(KryoBenchmark.class.getSimpleName())
             .warmupIterations(10)

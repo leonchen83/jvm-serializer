@@ -86,7 +86,7 @@ public abstract class KryoCodec {
         return kryos.get();
     }
 
-    public static Object decode(byte[] bytes) throws Exception {
+    public static <T> T decode(byte[] bytes) throws Exception {
         return getWrapper().decode(bytes);
     }
 
@@ -99,9 +99,9 @@ public abstract class KryoCodec {
         private Input input;
         private Output output;
 
-        public Object decode(byte[] bytes) throws Exception {
+        public <T> T  decode(byte[] bytes) throws Exception {
             input.setBuffer(bytes);
-            return kryo.readClassAndObject(input);
+            return (T)kryo.readClassAndObject(input);
         }
 
         public byte[] encode(Object object) throws Exception {
