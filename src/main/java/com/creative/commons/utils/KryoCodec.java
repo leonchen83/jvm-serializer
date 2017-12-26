@@ -4,8 +4,6 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.KryoSerializable;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.esotericsoftware.kryo.io.UnsafeInput;
-import com.esotericsoftware.kryo.io.UnsafeOutput;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Timestamp;
@@ -32,8 +30,6 @@ public abstract class KryoCodec {
         protected Wrapper initialValue() {
             Wrapper wrapper = new Wrapper();
             wrapper.kryo = new Kryo();
-            wrapper.input = new UnsafeInput();
-            wrapper.output = new UnsafeOutput(4096);
             wrapper.kryo.register(byte[].class);
             wrapper.kryo.register(char[].class);
             wrapper.kryo.register(short[].class);
@@ -96,17 +92,16 @@ public abstract class KryoCodec {
 
     private static class Wrapper {
         private Kryo kryo;
-        private Input input;
-        private Output output;
 
-        public <T> T  decode(byte[] bytes) throws Exception {
+        public <T> T  decode(byte[] bytes) {
+            Input input = new Input();
             input.setBuffer(bytes);
             return (T)kryo.readClassAndObject(input);
         }
 
-        public byte[] encode(Object object) throws Exception {
+        public byte[] encode(Object object) {
             //4K
-            output.clear();
+            Output output = new Output(4096);
             kryo.writeClassAndObject(output, object);
             return output.toBytes();
         }
