@@ -1,6 +1,7 @@
 package com.creative.commons.utils.benchmark;
 
 import com.creative.commons.utils.JsonCodec;
+import com.creative.commons.utils.KryoCodec;
 import com.creative.model.Father;
 import com.creative.model.Message;
 import com.creative.model.Son;
@@ -13,8 +14,8 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
-import org.openjdk.jmh.annotations.Benchmark;
 
+import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
@@ -22,7 +23,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 /**
  * @author xinyuzhou.zxy
  */
-public class FastJsonBenchmark {
+public class CodecBenchmark {
 
     protected static Message msg1 = new Message(
         "Most message-oriented middleware (MOM) products treat messages as lightweight entities that consist of a header and a body. The header contains fields used for message routing and identification; the body contains the application data being sent.");
@@ -70,9 +71,21 @@ public class FastJsonBenchmark {
         Message msg3 = JsonCodec.decode(obj3);
     }
 
+    @Benchmark
+    public void kryoCodecMultiTest() {
+        byte[] obj1 = KryoCodec.encode(msg1);
+        Message msg1 = KryoCodec.decode(obj1);
+
+        byte[] obj2 = KryoCodec.encode(msg2);
+        Message msg2 = KryoCodec.decode(obj2);
+
+        byte[] obj3 = KryoCodec.encode(msg3);
+        Message msg3 = KryoCodec.decode(obj3);
+    }
+
     public static void main(String[] args) throws Exception {
         Options opt = new OptionsBuilder()
-            .include(FastJsonBenchmark.class.getSimpleName())
+            .include(CodecBenchmark.class.getSimpleName())
             .warmupIterations(10)
             .measurementIterations(20)
             .forks(1)

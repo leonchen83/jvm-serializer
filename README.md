@@ -4,10 +4,8 @@ jvm-serializer
 
 ```java  
 
-Benchmark                          Mode  Cnt       Score      Error  Units
-KryoBenchmark.kryoCodecMultiTest  thrpt   20  181889.227 ± 1757.090  ops/s
-
-Benchmark                              Mode  Cnt       Score     Error  Units
-FastJsonBenchmark.jsonCodecMultiTest  thrpt   20  105931.368 ± 834.659  ops/s
+Benchmark                           Mode  Cnt       Score      Error  Units
+CodecBenchmark.jsonCodecMultiTest  thrpt   20   94643.404 ± 9044.686  ops/s
+CodecBenchmark.kryoCodecMultiTest  thrpt   20  183904.836 ± 4777.082  ops/s
 
 ```
